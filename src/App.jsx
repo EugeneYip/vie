@@ -749,7 +749,8 @@ export default function VietnameseMasterGuide() {
   }, [activeLevel]);
 
   return (
-    <div className="min-h-screen bg-[#f5f1e8] text-slate-900 selection:bg-emerald-200/60" style={{ fontFamily: "'Noto Sans', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="min-h-screen overflow-x-hidden bg-[#f5f1e8] text-slate-900 selection:bg-emerald-200/60" style={{ fontFamily: "'Noto Sans', 'Segoe UI', system-ui, sans-serif" }}>
+      <style>{`.hide-sb::-webkit-scrollbar{display:none}.hide-sb{scrollbar-width:none;-ms-overflow-style:none}`}</style>
       <div className="mx-auto max-w-7xl px-4 py-5 md:px-6">
 
         {/* ═══ SCROLLING TITLE BANNER ═══ */}
@@ -782,19 +783,19 @@ export default function VietnameseMasterGuide() {
         </div>
 
         {/* ═══ STICKY NAV BAR (compact) ═══ */}
-        <div className="sticky top-0 z-30 mb-5 rounded-2xl border border-white/60 bg-white/[0.95] px-4 py-2.5 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-lg">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-            <span className="mr-1 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Level</span>
+        <div className="sticky top-0 z-30 mb-5 overflow-hidden rounded-2xl border border-white/60 bg-white/[0.95] px-3 py-2 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-lg">
+          <div className="hide-sb -mb-2 flex items-center gap-1.5 overflow-x-auto pb-2">
+            <span className="mr-0.5 shrink-0 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Level</span>
             {LEVELS.map(lv => (
               <Pill key={lv.id} active={activeLevel === lv.id} onClick={() => setActiveLevel(lv.id)}>
                 {lv.label}
               </Pill>
             ))}
           </div>
-          <div className="mt-1.5 flex flex-wrap gap-1.5 overflow-x-auto">
+          <div className="hide-sb -mb-2 mt-1 flex items-center gap-1.5 overflow-x-auto pb-2">
             {filteredNav.map(s => (
               <button key={s.id} onClick={() => scrollTo(s.id)} type="button"
-                className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[12px] font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700">
+                className="shrink-0 whitespace-nowrap rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[12px] font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700">
                 {s.label}
               </button>
             ))}
@@ -1309,10 +1310,7 @@ export default function VietnameseMasterGuide() {
                 <h2 className="text-xl font-extrabold tracking-tight md:text-2xl">What this guide covers</h2>
                 <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-white/70">
                   4 progressive levels from zero to advanced proficiency. Tone pitch diagrams, vowel charts, pronoun relationship maps, sentence structure visuals, 5 situation categories, classifiers, connectors, regional accent comparison, cultural communication norms, particles, and idioms.
-                   <br />
-                   Vietnamese Learning Guide
-                   <br />
-                   © 2026 EugeneYip.com All Rights Reserved.
+                   <br /><br />Vietnamese Learning Guide<br />© 2026 EugeneYip.com All Rights Reserved.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
