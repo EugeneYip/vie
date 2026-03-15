@@ -137,7 +137,7 @@ function Card({ title, subtitle, icon, children, tone = "default", className: cx
 function Pill({ children, active, onClick }) {
   return (
     <button type="button" onClick={onClick}
-      className={cn("rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all",
+      className={cn("shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all",
         active ? "border-slate-900 bg-slate-900 text-white shadow-md" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")}>
       {children}
     </button>
@@ -147,7 +147,7 @@ function Pill({ children, active, onClick }) {
 function ExRow({ vi, en, note }) {
   return (
     <div className="rounded-xl border border-white/80 bg-white p-3 shadow-sm">
-      <div className="text-[15px] font-semibold text-slate-900">{vi}</div>
+      <div className="break-words text-[15px] font-semibold text-slate-900">{vi}</div>
       <div className="mt-0.5 text-[13px] text-slate-600">{en}</div>
       {note && <div className="mt-1.5 text-[12px] leading-relaxed text-slate-400">{note}</div>}
     </div>
@@ -229,7 +229,8 @@ function ToneDiagram() {
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-white p-4">
       <div className="mb-3 text-center text-[15px] font-semibold text-slate-800">Pitch Contour Diagram — The 6 Vietnamese Tones</div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: 280 }}>
+      <div className="overflow-x-auto">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ minWidth: 480, maxHeight: 280 }}>
         {/* Grid */}
         {[1,2,3,4,5].map(p => (
           <g key={p}>
@@ -244,6 +245,7 @@ function ToneDiagram() {
           <path key={t.name} d={toPath(t.points)} fill="none" stroke={t.color} strokeWidth={2.8} strokeLinecap="round" />
         ))}
       </svg>
+      </div>
       {/* Legend */}
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
         {tones.map(t => (
@@ -296,7 +298,8 @@ function VowelChart() {
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-white p-4">
       <div className="mb-3 text-center text-[15px] font-semibold text-slate-800">Vowel Chart — Tongue Position Map</div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxHeight: 320 }}>
+      <div className="overflow-x-auto">
+        <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ minWidth: 420, maxHeight: 320 }}>
         {/* Axis labels */}
         <text x={W / 2} y={18} textAnchor="middle" fontSize={11} fill="#94a3b8" fontWeight={600}>Front ← → Back</text>
         <text x={14} y={H / 2} textAnchor="middle" fontSize={11} fill="#94a3b8" fontWeight={600} transform={`rotate(-90,14,${H / 2})`}>Close → Open</text>
@@ -321,6 +324,7 @@ function VowelChart() {
           );
         })}
       </svg>
+      </div>
       <div className="mt-2 flex flex-wrap justify-center gap-3 text-[11px] text-slate-500">
         <span><span className="inline-block h-2 w-4 rounded" style={{ background: "#059669" }} /> Front vowels</span>
         <span><span className="inline-block h-2 w-4 rounded" style={{ background: "#d97706" }} /> Central vowels</span>
@@ -409,46 +413,39 @@ function PronounDiagram() {
 
 // ─── SENTENCE STRUCTURE DIAGRAM ───────────────────────────
 function SentenceStructureDiagram() {
+  const patterns = [
+    { blocks: [["Subject","emerald"],["→",""],["Verb","sky"],["→",""],["Object","amber"]], ex: "Tôi uống cà phê." },
+    { blocks: [["S","emerald"],["→",""],["đã / đang / sẽ","rose-dashed"],["→",""],["V","sky"],["→",""],["O","amber"]], ex: "Tôi đang ăn phở." },
+    { blocks: [["Number","violet"],["→",""],["Classifier","violet-dashed"],["→",""],["Noun","amber"]], ex: "hai con mèo = two cats" },
+    { blocks: [["Noun","amber"],["→",""],["Adjective","rose"]], ex: "nhà lớn = big house (not \"lớn nhà\")" },
+  ];
+  const blockStyle = (t) => {
+    const map = {
+      "emerald": "bg-emerald-100 text-emerald-800",
+      "sky": "bg-sky-100 text-sky-800",
+      "amber": "bg-amber-100 text-amber-800",
+      "rose": "bg-rose-100 text-rose-800",
+      "violet": "bg-violet-100 text-violet-800",
+      "rose-dashed": "border-2 border-dashed border-rose-300 bg-rose-50 text-rose-700",
+      "violet-dashed": "border-2 border-dashed border-violet-300 bg-violet-50 text-violet-700",
+    };
+    return map[t] || "";
+  };
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-white p-4">
       <div className="mb-3 text-center text-[15px] font-semibold text-slate-800">Core Sentence Patterns</div>
       <div className="space-y-3">
-        {/* SVO */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="rounded-lg bg-emerald-100 px-3 py-1.5 text-[13px] font-bold text-emerald-800">Subject</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-sky-100 px-3 py-1.5 text-[13px] font-bold text-sky-800">Verb</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-[13px] font-bold text-amber-800">Object</span>
-          <span className="ml-2 text-[12px] text-slate-400">Tôi uống cà phê.</span>
-        </div>
-        {/* Time marker placement */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="rounded-lg bg-emerald-100 px-3 py-1.5 text-[13px] font-bold text-emerald-800">S</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg border-2 border-dashed border-rose-300 bg-rose-50 px-3 py-1.5 text-[13px] font-bold text-rose-700">đã / đang / sẽ</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-sky-100 px-3 py-1.5 text-[13px] font-bold text-sky-800">V</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-[13px] font-bold text-amber-800">O</span>
-          <span className="ml-2 text-[12px] text-slate-400">Tôi đang ăn phở.</span>
-        </div>
-        {/* Classifier placement */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="rounded-lg bg-violet-100 px-3 py-1.5 text-[13px] font-bold text-violet-800">Number</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg border-2 border-dashed border-violet-300 bg-violet-50 px-3 py-1.5 text-[13px] font-bold text-violet-700">Classifier</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-[13px] font-bold text-amber-800">Noun</span>
-          <span className="ml-2 text-[12px] text-slate-400">hai con mèo = two cats</span>
-        </div>
-        {/* Adjective placement */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-[13px] font-bold text-amber-800">Noun</span>
-          <span className="text-slate-400">→</span>
-          <span className="rounded-lg bg-rose-100 px-3 py-1.5 text-[13px] font-bold text-rose-800">Adjective</span>
-          <span className="ml-2 text-[12px] text-slate-400">nhà lớn = big house (not "lớn nhà")</span>
-        </div>
+        {patterns.map((p, pi) => (
+          <div key={pi} className="rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {p.blocks.map(([label, tone], bi) =>
+                tone === "" ? <span key={bi} className="text-slate-300">→</span> :
+                <span key={bi} className={cn("rounded-lg px-2.5 py-1 text-[13px] font-bold", blockStyle(tone))}>{label}</span>
+              )}
+            </div>
+            <div className="mt-1.5 text-[12px] italic text-slate-500">{p.ex}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -975,7 +972,7 @@ export default function VietnameseMasterGuide() {
             <Section id="numbers" eyebrow="Numbers" title="From 0 to 1,000,000" level="L1"
               desc="You need numbers for prices, times, addresses, ages, and daily life. Start with 0–10, then learn the pattern for larger numbers."
               icon="hash">
-              <div className="mb-3 flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5">
                 {numberData.map(([tab]) => (
                   <Pill key={tab} active={activeNumberTab === tab} onClick={() => setActiveNumberTab(tab)}>{tab}</Pill>
                 ))}
@@ -1139,7 +1136,7 @@ export default function VietnameseMasterGuide() {
             <Section id="situations" eyebrow="Situations" title="Speak in real situations immediately" level="L2"
               desc="Pick one tab. Drill every phrase. Repeat until the block feels natural. Then move to the next."
               icon="target">
-              <div className="mb-3 flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5">
                 {Object.entries(situationData).map(([key, val]) => (
                   <Pill key={key} active={activeSituation === key} onClick={() => setActiveSituation(key)}>{val.title}</Pill>
                 ))}
@@ -1215,7 +1212,8 @@ export default function VietnameseMasterGuide() {
               icon="heart">
               <div className="grid gap-3 md:grid-cols-2">
                 {culturalNotes.map((n, i) => (
-                  <Card key={i} title={n.title} tone={i % 4 === 0 ? "emerald" : i % 4 === 1 ? "sky" : i % 4 === 2 ? "amber" : "rose"}>
+                  <Card key={i} title={n.title} tone={i % 4 === 0 ? "emerald" : i % 4 === 1 ? "sky" : i % 4 === 2 ? "amber" : "rose"}
+                    className={i === culturalNotes.length - 1 && culturalNotes.length % 2 !== 0 ? "md:col-span-2" : ""}>
                     {n.text}
                   </Card>
                 ))}
@@ -1245,7 +1243,8 @@ export default function VietnameseMasterGuide() {
               icon="star">
               <div className="grid gap-3 md:grid-cols-2">
                 {idioms.map(([vi, literal, meaning], i) => (
-                  <Card key={i} title={vi} tone={i % 3 === 0 ? "emerald" : i % 3 === 1 ? "amber" : "rose"}>
+                  <Card key={i} title={vi} tone={i % 3 === 0 ? "emerald" : i % 3 === 1 ? "amber" : "rose"}
+                    className={i === idioms.length - 1 && idioms.length % 2 !== 0 ? "md:col-span-2" : ""}>
                     <div className="mb-1 text-[13px] font-medium text-slate-700">Literal: {literal}</div>
                     <div className="text-[13px] text-slate-500">Meaning: {meaning}</div>
                   </Card>
@@ -1304,11 +1303,16 @@ export default function VietnameseMasterGuide() {
             <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
                 <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80">
-                  <Icon name="sparkles" className="h-3 w-3" strokeWidth={2.2} />Quick reference
+                  <Icon name="sparkles" className="h-3 w-3" strokeWidth={2.2} />
+                  Quick reference
                 </div>
                 <h2 className="text-xl font-extrabold tracking-tight md:text-2xl">What this guide covers</h2>
                 <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-white/70">
                   4 progressive levels from zero to advanced proficiency. Tone pitch diagrams, vowel charts, pronoun relationship maps, sentence structure visuals, 5 situation categories, classifiers, connectors, regional accent comparison, cultural communication norms, particles, and idioms.
+                   <br />
+                   Vietnamese Learning Guide
+                   <br />
+                   © 2026 EugeneYip.com All Rights Reserved.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
